@@ -1,47 +1,96 @@
-import { Container, Nav, NavDropdown, Navbar, Offcanvas } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Link } from 'react-router-dom';
-import { FaShoppingCart } from "react-icons/fa";
+import { useEffect, useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { FaHeart, FaShoppingCart } from "react-icons/fa";
 
 export default function Header() {
+
+  const [isOpen, setIsOpen] = useState(false);
+  const navRef = useRef(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (navRef.current) {
+      if (isOpen) {
+        navRef.current.style.maxHeight = `${navRef.current.scrollHeight}px`;
+      } else {
+        navRef.current.style.maxHeight = '0px';
+      }
+    }
+  }, [isOpen]);
+
   return (
-    <>
-        <Navbar expand="sm" className="bg-body-tertiary mb-3 shadow-sm">
-            <Container>
-            <Navbar.Brand href="#">Fashion Fiesta</Navbar.Brand>
-            <Navbar.Toggle aria-controls="offcanvasNavbar-expand-sm" className='custom-navbar-toggler'/>
+    <header className="bg-white shadow-md">
+      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
 
-            <Navbar.Offcanvas id="offcanvasNavbar-expand-sm" aria-labelledby="offcanvasNavbarLabel-expand-sm" placement="end">
-                <Offcanvas.Header closeButton className='custom-offcanvas-close'>
-                <Offcanvas.Title id="offcanvasNavbarLabel-expand-sm" style={{'color': 'rgb(168, 0, 168)'}}>
-                    Menu
-                </Offcanvas.Title>
-                </Offcanvas.Header>
-                <Offcanvas.Body>
-                <Nav className="justify-content-end flex-grow-1 pe-3">
-                    <Nav.Link>
-                        <Link to='/' className='link'>Home</Link>
-                    </Nav.Link>
-                    <Nav.Link>
-                        <Link to='/collections' className='link'>Collections</Link>
-                    </Nav.Link>
-                    <Nav.Link className='position-relative d-none d-lg-inline'>
-                        <Link to='/cart' className='link'><FaShoppingCart /><span className="position-absolute mt-2 top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{'font-size': '10px'}}>5</span></Link>
-                    </Nav.Link>
+        <div className="text-lg sm:text-xl font-bold">
+          <Link to="/">Fashion Fiesta</Link>
+        </div>
 
-                    <NavDropdown title="Login" id="offcanvasNavbarDropdown-expand-sm" className='ps-lg-2 fw-semibold'>
-                        <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
-                        <NavDropdown.Item href="#action4">Another action</NavDropdown.Item>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item href="#action5">Something else here</NavDropdown.Item>
-                    </NavDropdown>
+        <nav className="hidden md:flex space-x-4">
+            <NavLinkLg to="/" label="Home" currentPath={location.pathname} />
+            <NavLinkLg to="/collections" label="Collections" currentPath={location.pathname} />
+        </nav>
 
-                </Nav>
-            
-                </Offcanvas.Body>
-            </Navbar.Offcanvas>
-            </Container>
-        </Navbar>
-    </>
-  )
+        <div className="flex items-center space-x-6">
+          <Link to="/cart" className="relative">
+            <FaShoppingCart className="text-gray-700 hover:text-[#ff008a] text-xl sm:text-2xl" />
+            <span className="absolute top-0 left-4 sm:left-5 bg-red-500 text-white text-xs rounded-full px-1">7</span>
+          </Link>
+          <Link to="/" className="relative">
+            <FaHeart className="text-gray-700 hover:text-[#ff008a] text-xl sm:text-2xl" />
+            <span className="absolute top-0 left-4 sm:left-5 bg-red-500 text-white text-xs rounded-full px-1">2</span>
+          </Link>
+        </div>
+
+        {!isOpen && (
+            <button onClick={() => setIsOpen(true)} className="md:hidden text-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        )}
+        
+        {isOpen && (
+            <button onClick={() => setIsOpen(false)} className="md:hidden text-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        )}
+      </div>
+
+      {isOpen && (
+        <nav ref={navRef} className="md:hidden bg-white shadow-md transition-height max-h-0">
+          <NavLink to="/" label="Home" currentPath={location.pathname} setIsOpen={setIsOpen} />
+          <NavLink to="/collections" label="Collections" currentPath={location.pathname} setIsOpen={setIsOpen} />
+        </nav>
+      )}
+    </header>
+  );
+}
+
+function NavLink({ to, label, currentPath, setIsOpen }) {
+    const isActive = currentPath === to;
+  
+    return (
+      <Link
+        to={to}
+        className={`block px-4 py-2 text-gray-700 hover:text-[#ff008a] ${isActive ? 'font-bold text-[#ff008a]' : ''}`}
+        onClick={() => setIsOpen(false)} // Close menu on click
+      >
+        {label}
+      </Link>
+    );
+}
+function NavLinkLg({ to, label, currentPath }) {
+    const isActive = currentPath === to;
+  
+    return (
+      <Link
+        to={to}
+        className={`text-gray-700 hover:text-[#ff008a] ${isActive ? 'font-bold text-[#ff008a]' : ''}`}
+      >
+        {label}
+      </Link>
+    );
 }
