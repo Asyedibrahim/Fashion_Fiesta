@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+body{
+    box-sizing: border-box;
+}
+
+*{
+    font-family: 'Poppins', sans-serif;
+}
+
+a{
+    text-decoration: none !important;
+}
+.dropdown-toggle:hover{
+    color: #ff4aab;
+}
+.navbar-nav .nav-link.active, .navbar-nav .nav-link.show {
+    color: #ff4aab;
+}
+a.link{
+    color: rgb(92, 92, 92);
+    font-weight: 600;
+}
+a.link:hover{
+    color: #ff4aab !important;
+}
