@@ -17,10 +17,6 @@ export default function App() {
 
         <Route path='/collections' element={<Collections />} />
 
-        <Route path='/sign-up' element={<SignUp />} />
-
-        <Route path='/sign-in' element={<SignIn />} />
-
         <Route path='/cart' element={<Cart />} />
       </Routes>
 

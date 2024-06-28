@@ -3,12 +3,16 @@ import { Link, useLocation } from 'react-router-dom';
 import { FaHeart, FaShoppingCart } from "react-icons/fa";
 import { IoPerson } from "react-icons/io5";
 import SignIn from '../pages/SignIn';
+import SignUp from '../pages/SignUp';
 
 export default function Header() {
 
   const [isOpen, setIsOpen] = useState(false);
   const navRef = useRef(null);
   const location = useLocation();
+
+  const [isSignInOpen, setIsSignInOpen] = useState(false);
+  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
 
   useEffect(() => {
     if (navRef.current) {
@@ -19,6 +23,16 @@ export default function Header() {
       }
     }
   }, [isOpen]);
+
+  const handleSignInClick = () => {
+    setIsSignUpOpen(false);
+    setIsSignInOpen(true);
+  };
+
+  const handleSignUpClick = () => {
+    setIsSignInOpen(false);
+    setIsSignUpOpen(true);
+  };
 
   return (
     <header className="bg-white shadow-md">
@@ -53,7 +67,8 @@ export default function Header() {
             <Dropdown.Item>Separated link</Dropdown.Item>
           </Dropdown> */}
 
-          <SignIn />
+          <SignIn openModal={isSignInOpen} setOpenModal={setIsSignInOpen} handleSignUpClick={handleSignUpClick} />
+          <SignUp openModal={isSignUpOpen} setOpenModal={setIsSignUpOpen} handleSignInClick={handleSignInClick} />
         </div>
 
         {!isOpen && (

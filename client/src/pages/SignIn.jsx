@@ -1,9 +1,5 @@
 import { Button, Dropdown, Label, Modal, TextInput } from 'flowbite-react';
-import { useState } from 'react';
-
-export default function SignIn() {
-
-  const [openModal, setOpenModal] = useState(false);
+export default function SignIn({ openModal, setOpenModal, handleSignUpClick }) {
 
   function onCloseModal() {
     setOpenModal(false);
@@ -17,7 +13,7 @@ export default function SignIn() {
         <Modal.Header />
         <Modal.Body>
           <div className="space-y-6">
-            <h3 className="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h3>
+            <h3 className="text-xl font-medium text-gray-900 dark:text-white">Login to our platform</h3>
             <div>
               <div className="mb-2 block">
                 <Label htmlFor="email" value="Your email" />
@@ -41,9 +37,7 @@ export default function SignIn() {
             </div>
             <div className="flex justify-between text-sm font-medium text-gray-500 ">
               Not registered?&nbsp;
-              <button className="text-[#ff008a] hover:underline">
-                Create account
-              </button>
+              <button className="text-[#ff008a] hover:underline" onClick={handleSignUpClick}>Create account</button>
             </div>
           </div>
         </Modal.Body>
