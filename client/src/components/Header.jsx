@@ -2,11 +2,23 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { FaHeart, FaShoppingCart } from "react-icons/fa";
 import { IoPerson } from "react-icons/io5";
+import { TiDeleteOutline } from 'react-icons/ti';
+import { HiArrowSmRight } from 'react-icons/hi';
+import SignIn from '../pages/SignIn';
+import SignUp from '../pages/SignUp';
+import { Dropdown } from 'flowbite-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { signOutSuccess } from '../redux/user/userSlice';
 
 export default function Header() {
 
   const [isOpen, setIsOpen] = useState(null)
   const navRef = useRef(null);
+  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  const [isSignInOpen, setIsSignInOpen] = useState(false);
+  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
 
   useEffect(() => {
     if (navRef.current) {
@@ -17,6 +29,35 @@ export default function Header() {
       }
     }
   }, [isOpen]);
+
+  const handleSignInClick = () => {
+    setIsSignUpOpen(false);
+    setIsSignInOpen(true);
+  };
+
+  const handleSignUpClick = () => {
+    setIsSignInOpen(false);
+    setIsSignUpOpen(true);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      const res = await fetch('/api/auth/signout', {
+          method: 'POST'
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+          dispatch(signOutSuccess(data));
+      } else {
+          console.log(data.message);
+      }
+
+    } catch (error) {
+      console.log(error.message);
+    }
+};
 
   return (
     <header className="bg-white shadow-md">
@@ -42,17 +83,28 @@ export default function Header() {
             <FaHeart className="text-gray-700 hover:text-[#ff008a] text-xl sm:text-2xl" />
             <span className="absolute top-0 left-4 sm:left-5 bg-red-500 text-white text-xs rounded-full px-1">2</span>
           </Link>
-
-          {/* <Dropdown label={<IoPerson className='text-gray-700 -mr-2 text-xl sm:text-2xl'/>} inline>
-            <Dropdown.Item>Sign In</Dropdown.Item>
-            <Dropdown.Item>Settings</Dropdown.Item>
-            <Dropdown.Item>Earnings</Dropdown.Item>
-            <Dropdown.Divider />
-            <Dropdown.Item>Separated link</Dropdown.Item>
-          </Dropdown> */}
-
-          <Link to='/sign-in' className='bg-[#f7128c] text-white px-3 py-[5px] rounded-md text-[14px] font-semibold hover:bg-[#f0158a]'>Login</Link>
-
+          
+          {currentUser ? (
+            <Dropdown 
+            arrowIcon={true} 
+            inline
+            label={ <IoPerson className='text-gray-700 text-xl sm:text-2xl'/> }>
+                <Dropdown.Header>
+                    <span className='block text-sm font-medium truncate'>{currentUser.email}</span>
+                </Dropdown.Header>
+                <Dropdown.Item icon={TiDeleteOutline} className='text-red-500 font-semibold'>
+                    Delete account
+                </Dropdown.Item>
+                <Dropdown.Item icon={HiArrowSmRight} className='text-green-500 font-semibold' onClick={handleSignOut}>
+                    Sign out
+                </Dropdown.Item>
+            </Dropdown>
+          ) : (
+            <>
+              <SignIn openModal={isSignInOpen} setOpenModal={setIsSignInOpen} handleSignUpClick={handleSignUpClick} />
+              <SignUp openModal={isSignUpOpen} setOpenModal={setIsSignUpOpen} handleSignInClick={handleSignInClick} />
+            </>
+          )}
 
         </div>
 
