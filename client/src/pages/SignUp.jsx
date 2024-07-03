@@ -1,5 +1,6 @@
 import { Button, Label, Modal, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
+import Oauth from "../components/Oauth";
 
 export default function SignUp({ openModal, setOpenModal, handleSignInClick }) {
 
@@ -72,6 +73,7 @@ export default function SignUp({ openModal, setOpenModal, handleSignInClick }) {
         <Modal.Body>
           <form className="space-y-6" autoComplete='off'>
             <h3 className="text-xl font-medium text-gray-900 dark:text-white">Register to our platform</h3>
+            
             <div>
               <div className="mb-2 block">
                 <Label htmlFor="email" value="Your email" />
@@ -91,8 +93,7 @@ export default function SignUp({ openModal, setOpenModal, handleSignInClick }) {
               {error && <p className="text-red-600 text-sm mt-3">{error}</p>}
             </div>
             
-            <div className="w-full">
-              <Button type="submit" gradientMonochrome='pink' onClick={handleSubmit} disabled={loading}>
+              <Button className="w-full" type="submit" gradientMonochrome='pink' onClick={handleSubmit} disabled={loading}>
                 {loading ? (
                   <>
                     <Spinner size='sm'/>
@@ -101,8 +102,14 @@ export default function SignUp({ openModal, setOpenModal, handleSignInClick }) {
                   ) : 'Register to your account'
                 }
               </Button>
-            </div>
-            <div className="flex justify-between text-sm font-medium text-gray-500 ">
+              <div className="grid grid-cols-3 items-center text-gray-500">
+                <hr className='border-gray-500'/>
+                <p className='text-center'>OR</p>
+                <hr className='border-gray-500'/>
+              </div>
+              <Oauth />
+              
+              <div className="flex justify-between text-sm font-medium text-gray-500 ">
               Already registered?&nbsp;
               <button className="text-[#ff008a] hover:underline" onClick={handleLoginClick}>Login</button>
             </div>

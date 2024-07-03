@@ -11,7 +11,3 @@ body{
     font-family: 'Poppins', sans-serif;
 }
 
-.transition-height {
-    transition: max-height 0.3s ease-in-out;
-    overflow: hidden;
-}

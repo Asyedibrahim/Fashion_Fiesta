@@ -2,6 +2,7 @@ import { Button, Label, Modal, Spinner, TextInput } from 'flowbite-react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { signInFailure, signInStart, signInSuccess } from '../redux/user/userSlice.js';
+import Oauth from '../components/Oauth.jsx';
 
 export default function SignIn({ openModal, setOpenModal, handleSignUpClick }) {
 
@@ -92,8 +93,7 @@ export default function SignIn({ openModal, setOpenModal, handleSignUpClick }) {
               {error && <p className="text-red-600 text-sm mt-3">{error}</p>}
               </div>
             
-            <div className="w-full">
-              <Button gradientMonochrome='pink' type='submit' onClick={handleSubmit} disabled={loading}>
+              <Button gradientMonochrome='pink' type='submit' onClick={handleSubmit} disabled={loading} className="w-full">
                 {loading ? (
                   <>
                     <Spinner size='sm'/>
@@ -102,7 +102,13 @@ export default function SignIn({ openModal, setOpenModal, handleSignUpClick }) {
                   ) : 'Log in to your account'
                 }
               </Button>
-            </div>
+              
+            <div className="grid grid-cols-3 items-center text-gray-500">
+                <hr className='border-gray-500'/>
+                <p className='text-center'>OR</p>
+                <hr className='border-gray-500'/>
+              </div>
+              <Oauth />
             <div className="flex justify-between text-sm font-medium text-gray-500 ">
               Not registered?&nbsp;
               <button className="text-[#ff008a] hover:underline" onClick={handleSignUpClick}>Create account</button>

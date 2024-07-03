@@ -1,34 +1,27 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
+import { CgMenuGridR } from "react-icons/cg";
 import { Link, NavLink } from 'react-router-dom';
 import { FaHeart, FaShoppingCart } from "react-icons/fa";
 import { IoPerson } from "react-icons/io5";
 import { TiDeleteOutline } from 'react-icons/ti';
 import { HiArrowSmRight } from 'react-icons/hi';
+import { MdDashboardCustomize } from 'react-icons/md'
 import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
-import { Dropdown } from 'flowbite-react';
+import { Drawer, Dropdown, Sidebar } from 'flowbite-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { signOutSuccess } from '../redux/user/userSlice';
 
 export default function Header() {
 
   const [isOpen, setIsOpen] = useState(null)
-  const navRef = useRef(null);
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const [isSignInOpen, setIsSignInOpen] = useState(false);
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
 
-  useEffect(() => {
-    if (navRef.current) {
-      if (isOpen) {
-        navRef.current.style.maxHeight = `${navRef.current.scrollHeight}px`;
-      } else {
-        navRef.current.style.maxHeight = '0px';
-      }
-    }
-  }, [isOpen]);
+  const handleClose = () => setIsOpen(false);
 
   const handleSignInClick = () => {
     setIsSignUpOpen(false);
@@ -63,13 +56,13 @@ export default function Header() {
     <header className="bg-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
 
-        <div className="text-md sm:text-xl font-bold">
+        <div className="text-md sm:text-xl font-bold ">
           <Link to="/">Fashion Fiesta</Link>
         </div>
 
         <nav className="hidden md:flex space-x-4">
-            <NavLink to='/' className={({isActive}) => isActive ? 'text-[#ff008a] font-semibold' : ''}>Home</NavLink>
-            <NavLink to="/collections" className={({isActive}) => isActive ? 'text-[#ff008a] font-semibold' : ''}>Collections</NavLink>
+            <NavLink to='/' className={({isActive}) => isActive ? 'text-[#ff008a] font-semibold' : 'hover:text-[#ff008a]'}>Home</NavLink>
+            <NavLink to="/collections" className={({isActive}) => isActive ? 'text-[#ff008a] font-semibold' : 'hover:text-[#ff008a]'}>Collections</NavLink>
         </nav>
 
         <div className="flex items-center space-x-4 sm:space-x-6">
@@ -85,13 +78,18 @@ export default function Header() {
           </Link>
           
           {currentUser ? (
-            <Dropdown 
-            arrowIcon={true} 
-            inline
-            label={ <IoPerson className='text-gray-700 text-xl sm:text-2xl'/> }>
+            <Dropdown arrowIcon={true} inline label={ <IoPerson className='text-gray-700 text-xl sm:text-2xl'/> }>
                 <Dropdown.Header>
                     <span className='block text-sm font-medium truncate'>{currentUser.email}</span>
                 </Dropdown.Header>
+                {currentUser.isAdmin && (
+                        <Link to={'/dashboard'}>
+                            <Dropdown.Item icon={MdDashboardCustomize} className='text-blue-500 font-semibold'>
+                                Dashboard
+                            </Dropdown.Item>
+                        </Link>
+                    )}
+                {currentUser.isAdmin && <Dropdown.Divider />}
                 <Dropdown.Item icon={TiDeleteOutline} className='text-red-500 font-semibold'>
                     Delete account
                 </Dropdown.Item>
@@ -116,35 +114,27 @@ export default function Header() {
           </button>
         )}
         
-        {isOpen && (
-          <button onClick={() => setIsOpen(false)} className="md:hidden text-gray-700">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-          </button>
-        )}
       </div>
 
-      {isOpen && (
-        <nav ref={navRef} className=" md:hidden bg-white shadow-md transition-height max-h-0">
-
-          <NavLink 
-            to='/' 
-            className={({isActive}) => isActive ? 'text-[#ff008a] font-semibold block px-4 py-2' : 'block px-4 py-2 text-gray-700 hover:text-[#ff008a]'} 
-            onClick={() => setIsOpen(false)}>
-              Home
-          </NavLink>
-
-          <NavLink 
-            to="/collections" 
-            className={({isActive}) => isActive ? 'text-[#ff008a] font-semibold block px-4 py-2' : 'block px-4 py-2 text-gray-700 hover:text-[#ff008a]'} 
-            onClick={() => setIsOpen(false)}>
-              Collections
-          </NavLink>
-          
-        </nav>
-      )}
-
+      <Drawer open={isOpen} onClose={handleClose} position="right">
+        <Drawer.Header title="Menu" titleIcon={CgMenuGridR}/>
+        <Drawer.Items>
+          <Sidebar className="[&>div]:bg-transparent [&>div]:p-0">
+            <div className="flex h-full flex-col justify-between py-2">
+              <Sidebar.Items>
+                <Sidebar.ItemGroup className='flex flex-col gap-3'>
+                  <NavLink to='/' onClick={() => setIsOpen(false)} className={({isActive}) => isActive ? 'text-[#ff008a] font-semibold' : 'hover:text-[#ff008a]'}>
+                      Home
+                  </NavLink>
+                  <NavLink to='/collections' onClick={() => setIsOpen(false)} className={({isActive}) => isActive ? 'text-[#ff008a] font-semibold' : 'hover:text-[#ff008a]'}>
+                      Collections
+                  </NavLink>
+                </Sidebar.ItemGroup>
+              </Sidebar.Items>
+            </div>
+          </Sidebar>
+        </Drawer.Items>
+      </Drawer>
     </header>
   );
 }

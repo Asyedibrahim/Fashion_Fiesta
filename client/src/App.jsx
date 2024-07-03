@@ -3,6 +3,8 @@ import Home from './pages/Home';
 import Header from './components/Header';
 import Collections from './pages/Collections';
 import Cart from './pages/Cart';
+import Dashboard from './pages/Dashboard';
+import PrivateRoute from './components/PrivateRoute';
 
 export default function App() {
   return (
@@ -16,6 +18,10 @@ export default function App() {
         <Route path='/collections' element={<Collections />} />
 
         <Route path='/cart' element={<Cart />} />
+
+        <Route element={<PrivateRoute />}>
+          <Route path='/dashboard' element={<Dashboard />}></Route>
+        </Route>
 
       </Routes>
 
