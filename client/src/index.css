@@ -11,3 +11,7 @@ body{
     font-family: 'Poppins', sans-serif;
 }
 
+.bg-cyan-50{
+    background-color: #ff008a;
+    color: white;
+}

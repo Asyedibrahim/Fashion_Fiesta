@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import userRoutes from './routes/user.route.js';
 import authRoutes from './routes/auth.route.js';
 import categoryRoutes from './routes/category.route.js';
+import sizeRoutes from './routes/size.route.js';
 import cookieParser from 'cookie-parser';
 
 dotenv.config();
@@ -26,6 +27,7 @@ app.listen(3000, () => {
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/category', categoryRoutes);
+app.use('/api/size', sizeRoutes);
 
 
 // Middleware function

@@ -7,7 +7,7 @@ export const createCategory = async (req, res, next) => {
             return next(errorHandler(403, 'You are not allowed to create a category!'))
         }
 
-        const newCategory = new Category({ cname: req.body.cname });
+        const newCategory = new Category({ cname: req.body.cname, containSize: req.body.containSize });
         await newCategory.save();
         res.status(201).json(newCategory);
 
@@ -60,6 +60,7 @@ export const editCategory = async (req, res, next) => {
 
         const editedCategory = await Category.findByIdAndUpdate(req.params.id, {
             cname: req.body.cname, 
+            containSize: req.body.containSize, 
         },{new: true});
 
         res.status(200).json(editedCategory);
