@@ -7,12 +7,12 @@ export const createSize = async (req, res, next) => {
             return next(errorHandler(403, 'You are not allowed to create a size!'))
         }
 
-        const existingSize = await Size.findOne({ sizes: req.body.size });
+        const existingSize = await Size.findOne({ sname: req.body.size });
         if (existingSize) {
             return next(errorHandler(403, 'Size already exists!'));
         }
 
-        const newSize = new Size({ sizes: req.body.size });
+        const newSize = new Size({ sname: req.body.size });
         await newSize.save();
         res.status(201).json(newSize);
 
@@ -72,7 +72,7 @@ export const editSize = async (req, res, next) => {
         }
 
         const editedSize = await Size.findByIdAndUpdate(req.params.id, {
-            sizes: req.body.size,
+            sname: req.body.size,
         },{new: true});
 
         res.status(200).json(editedSize);

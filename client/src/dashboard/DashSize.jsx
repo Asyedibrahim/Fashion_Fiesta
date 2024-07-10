@@ -116,8 +116,8 @@ export default function DashSize() {
               <Table.Body className='divide-y' key={size._id}>
                 <Table.Row className='bg-white' >
                   <Table.Cell>{new Date(size.createdAt).toLocaleDateString()}</Table.Cell>
-                  <Table.Cell className='font-medium text-gray-900 uppercase'>{size.sizes}</Table.Cell>
-                  <Table.Cell className='text-teal-500 font-medium hover:underline cursor-pointer' onClick={() => {handleEdit(size._id, size.sizes); focusRef.current.focus()}} >
+                  <Table.Cell className='font-medium text-gray-900 uppercase'>{size.sname}</Table.Cell>
+                  <Table.Cell className='text-teal-500 font-medium hover:underline cursor-pointer' onClick={() => {handleEdit(size._id, size.sname); focusRef.current.focus()}} >
                     Edit
                   </Table.Cell>
                   <Table.Cell>

@@ -5,6 +5,7 @@ import Collections from './pages/Collections';
 import Cart from './pages/Cart';
 import Dashboard from './pages/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
+import CreateProduct from './pages/CreateProduct';
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
 
         <Route element={<PrivateRoute />}>
           <Route path='/dashboard' element={<Dashboard />}></Route>
+          <Route path='/create-product' element={<CreateProduct />}></Route>
         </Route>
 
       </Routes>

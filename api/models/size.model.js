@@ -1,10 +1,9 @@
 import mongoose from "mongoose";
 
 const sizeSchema = new mongoose.Schema({
-    sizes: {
+    sname: {
         type: String,
         required: true,
-        unique: true,
     }
 }, { timestamps: true });
 

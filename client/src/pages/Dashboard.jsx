@@ -41,7 +41,7 @@ export default function Dashboard() {
       {tab === 'createProduct' && <DashCreateProduct />}
       {/* Create Categoery... */}
       {tab === 'createCategory' && <DashCategory />}
-      {/* Create Product... */}
+      {/* Create Size... */}
       {tab === 'createSize' && <DashSize />}
 
     </div>
