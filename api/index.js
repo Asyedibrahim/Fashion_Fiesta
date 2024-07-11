@@ -5,6 +5,7 @@ import userRoutes from './routes/user.route.js';
 import authRoutes from './routes/auth.route.js';
 import categoryRoutes from './routes/category.route.js';
 import sizeRoutes from './routes/size.route.js';
+import productRoutes from './routes/product.route.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
@@ -30,7 +31,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/category', categoryRoutes);
 app.use('/api/size', sizeRoutes);
-
+app.use('/api/product', productRoutes);
 
 // Middleware function
 

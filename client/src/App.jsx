@@ -6,6 +6,7 @@ import Cart from './pages/Cart';
 import Dashboard from './pages/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
 import CreateProduct from './pages/CreateProduct';
+import Product from './pages/Product';
 
 export default function App() {
   return (
@@ -24,6 +25,8 @@ export default function App() {
           <Route path='/dashboard' element={<Dashboard />}></Route>
           <Route path='/create-product' element={<CreateProduct />}></Route>
         </Route>
+
+        <Route path='/product/:productId' element={<Product />} />
 
       </Routes>
 
