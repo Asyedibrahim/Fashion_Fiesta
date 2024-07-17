@@ -40,6 +40,9 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    tags: {
+        type: Array
+    },
     trending: {
         type: Boolean,
         default: false,

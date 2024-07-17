@@ -40,25 +40,24 @@ export default function DashCreateProduct() {
     } catch (error) {
       console.log(error.message);
     }
-  }
+  };
 
   return (
-    <div className='max-w-4xl w-full p-3'>
+      
+      <div className='table-auto overflow-x-scroll scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 max-w-7xl w-full p-3'>
       <h1 className='text-3xl mt-5'>Product</h1>
 
-      <div className='mt-10 flex justify-between gap-3'>
+      <div className='my-10 flex justify-between gap-3'>
         <TextInput id='search' placeholder='Search products..' className='w-96'/>
-        
-          <Link to='/create-product' className='bg-[#ff008a] hover:bg-[#ff319f] text-white py-[10px] px-3 text-sm font-semibold rounded-md whitespace-nowrap' >
-            Create +
-          </Link>
-      </div>
 
-      <div className='table-auto mt-10 overflow-x-scroll shadow-md scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300'>
+        <Link to='/create-product' className='bg-[#ff008a] hover:bg-[#ff319f] text-white py-[10px] px-3 text-sm font-semibold rounded-md whitespace-nowrap' >
+          Create +
+        </Link>
+      </div>
       {loading ? <p className='text-3xl my-52 justify-center flex gap-2 items-center'>Loading...<Spinner size='lg' color='pink'/></p> : 
       currentUser.isAdmin && products.length > 0 && !loading ? (
         <>
-          <Table hoverable className='shadow-md w-full'>
+          <Table hoverable className='w-full'>
             <Table.Head>
               <Table.HeadCell>Date</Table.HeadCell>
               <Table.HeadCell>Name</Table.HeadCell>
@@ -72,13 +71,15 @@ export default function DashCreateProduct() {
               <Table.Body className='divide-y' key={product._id}>
                 <Table.Row className='bg-white'>
                   <Table.Cell>{new Date(product.createdAt).toLocaleDateString()}</Table.Cell>
-                  <Table.Cell className='font-medium text-gray-900'>{product.name}</Table.Cell>
-                  <Table.Cell>{product.category}</Table.Cell>
+                  <Table.Cell className='font-medium text-gray-900'>
+                    <Link to={`/product/${product._id}`}>{product.name}</Link>
+                  </Table.Cell>
+                  <Table.Cell className='capitalize'>{product.category}</Table.Cell>
                   <Table.Cell>{product.sizes.join(', ')}</Table.Cell>
                   <Table.Cell>{product.quantity}</Table.Cell>
                   <Table.Cell>{product.trending ? 'Yes' : 'No'}</Table.Cell>
                   <Table.Cell className='text-teal-500 font-medium hover:underline cursor-pointer'>
-                    Edit
+                    <Link to={`/edit-product/${product._id}`}>Edit</Link>
                   </Table.Cell>
                   <Table.Cell>
                     <span className='text-red-500 font-medium hover:underline cursor-pointer' 
@@ -94,6 +95,5 @@ export default function DashCreateProduct() {
         <p>You have no product yet!</p>
       )}
     </div>
-  </div>
   )
 }

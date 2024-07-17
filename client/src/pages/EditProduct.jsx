@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { IoIosArrowDown, IoIosCloseCircleOutline } from "react-icons/io";
 import ProductPreview from '../components/ProductPreview';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-export default function CreateProduct() {
+export default function EditProduct() {
 
   const [formData, setFormData] = useState({
     name: '',
@@ -25,7 +25,9 @@ export default function CreateProduct() {
   const { currentUser } = useSelector((state) => state.user);
   const [containSize, setContainSize] = useState(false);
   const navigate = useNavigate();
+  const { productId } = useParams();
   const [imagePreview, setImagePreview] = useState([]); 
+  const [deletedImages, setDeletedImages] = useState([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -56,12 +58,28 @@ export default function CreateProduct() {
             console.log(error.message);
         }
     }
+    const fetchProduct = async () => {
+        try {
+            const res = await fetch(`/api/product/getProduct/${productId}`);
+            const data = await res.json();
+            if (!res.ok) {
+                console.log(data.message);
+                return;
+            }
+            setFormData(data);
+            setImagePreview(data.images.map((image) => `http://localhost:3000/${image}`));
+
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
 
     if (currentUser.isAdmin) {
         fetchCategories();
         fetchSizes();
+        fetchProduct();
     }
-  }, []);
+  }, [productId]);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -92,8 +110,8 @@ export default function CreateProduct() {
     setFormData({ ...formData, tags: newTags });
   };
   const handleTagRemove = (tagToRemove) => {
-    const updatedTags = formData.tags.filter(tag => tag !== tagToRemove);
-    setFormData({ ...formData, tags: updatedTags });
+    const removedTag = formData.tags.filter(tag => tag !== tagToRemove);
+    setFormData({ ...formData, tags: removedTag });
   };
 
   //  handleChange for "Sizes"
@@ -104,35 +122,45 @@ export default function CreateProduct() {
     setFormData({ ...formData, sizes: selectedSizes });
   };
 
+  //  handleChange for "Images"
   const handleFileChange = (e) => {
     const selectedFiles = [...e.target.files];
-    setFormData({ ...formData, images: selectedFiles });
+    const updatedImages = [...formData.images, ...selectedFiles];
+    setFormData({ ...formData, images: updatedImages });
   
     const newPreviewUrls = selectedFiles.map((file) => URL.createObjectURL(file));
-    setImagePreview(newPreviewUrls);
+    setImagePreview([...imagePreview, ...newPreviewUrls]);
+
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    if (formData.images.length < 1) {
+      console.log('You must upload at least one image');
+      return;
+    }
+    if (+formData.discountPrice > +formData.regularPrice) {
+      console.log('Discount price must be lower than or equal to regular price');
+      return;
+    }
+  
+    const formDataObj = new FormData();
+    Object.keys(formData).forEach((key) => {
+      if (key === 'images') {
+        formData.images.forEach((file) => formDataObj.append('images', file));
+      } else {
+        formDataObj.append(key, formData[key]);
+      }
+    });
+    formDataObj.append('deletedImages', JSON.stringify(deletedImages));
+
     try {
-      if (formData.images.length < 1 ) return console.log('You must upload atleast one image');
-      if (+formData.discountPrice > +formData.regularPrice) return console.log('Discount price must be lower than regular price');
-
-      const formDataObj = new FormData();
-      Object.keys(formData).forEach(key => {
-        if (key === 'images') {
-          formData[key].forEach(file => formDataObj.append('images', file));
-        } else {
-          formDataObj.append(key, formData[key]);
-        }
+      const res = await fetch(`/api/product/edit/${productId}`, {
+        method: 'PUT',
+        body: formDataObj,
       });
-
-      const res = await fetch('/api/product/create', {
-        method: 'POST',
-        body: formDataObj
-      });
-
+  
       const data = await res.json();
       if (!res.ok) {
         console.log(data.message);
@@ -140,34 +168,34 @@ export default function CreateProduct() {
       }
       if (res.ok) {
         navigate(`/product/${data._id}`, { replace: true });
-        console.log('Product has been created!');
+        console.log('Product has been edited!', data);
       }
     } catch (error) {
       console.log(error.message);
-      
     }
   };
-
+  
   const onDeleteImage = (index) => {
     const updatedImagePreview = imagePreview.filter((_, i) => i !== index);
     setImagePreview(updatedImagePreview);
-  
+
     const updatedImages = formData.images.filter((_, i) => i !== index);
     setFormData({
       ...formData,
       images: updatedImages,
     });
+
+    setDeletedImages([...deletedImages, formData.images[index]]);
   };
-  
 
   return (
     <div className="max-w-6xl mx-auto p-3">
-      <h1 className="text-3xl mb-6 flex gap-2"><span className='text-[#ff008a]'>Create</span>Product</h1>
+      <h1 className="text-3xl mb-6 flex gap-2"><span className='text-[#ff008a]'>Edit</span>Product</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <form onSubmit={handleSubmit} autoComplete='off'>
             <div className="mb-4">
-                    <label className="text-sm font-medium text-gray-700">Name</label>
+                <label className="text-sm font-medium text-gray-700">Name</label>
                 <div className='flex gap-4 items-center'>
                     <TextInput
                         type="text"
@@ -177,7 +205,7 @@ export default function CreateProduct() {
                         className="rounded-md shadow-sm w-full"
                         required
                     />
-                    <Select id="category" onChange={handleChange} className='w-full'>
+                    <Select id="category" onChange={handleChange} className='w-full' defaultValue={formData.category === 'men'}>
                         <option value=''>Select Category</option>
                         {categories && categories.map((category) => (
                             <option key={category._id} value={category._id}>{category.cname}</option>
@@ -310,10 +338,10 @@ export default function CreateProduct() {
               <FileInput
                 type="file"
                 id="images"
+                accept="image/*"
                 multiple
                 onChange={handleFileChange}
                 className="mt-1 w-full rounded-md border"
-                required
                 helperText="PNG, JPG or JPEG (MAX : 1MB)."
               />
             </div>
@@ -333,11 +361,8 @@ export default function CreateProduct() {
               <button type="button" className="border-2 border-red-600 bg-red-600 hover:bg-red-700 text-white p-2 px-4 rounded-md shadow-sm ">
                 Cancel
               </button>
-              <button type="submit" className="border-2 border-[#ff008a] hover:bg-[#ff008a] hover:text-white text-[#ff008a] p-2 px-4 rounded-md shadow-sm ">
-                Save and Exit
-              </button>
               <button type="submit" className="bg-[#ff008a] border-2 border-[#ff008a] hover:bg-[#f83ca0] text-white p-2 px-4 rounded-md shadow-sm ">
-                Save and Next
+                Edit product
               </button>
             </div>
 
