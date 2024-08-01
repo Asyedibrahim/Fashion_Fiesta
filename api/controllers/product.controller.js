@@ -7,6 +7,11 @@ export const createProduct = async (req, res, next) => {
             return next(errorHandler(403, 'You are not allowed to create a product!'))
         }
 
+        // Ensure req.files is properly handled
+        if (!req.files || req.files.length === 0) {
+            return next(errorHandler(403, 'No files uploaded!'));
+        }
+  
         const imagePaths = req.files.map(file => file.path);
 
         const newProduct = new Product({
@@ -20,6 +25,7 @@ export const createProduct = async (req, res, next) => {
         res.status(201).json(newProduct);
 
     } catch (error) {
+        console.error('Error creating product:', error);
         next(error);
     }
 };
@@ -81,12 +87,12 @@ export const editProduct = async (req, res, next) => {
         product.name = req.body.name || product.name;
         product.description = req.body.description || product.description;
         product.category = req.body.category || product.category;
-        product.sizes = req.body.sizes || product.sizes;
+        product.sizes = req.body.sizes.split(',') || product.sizes;
         product.quantity = req.body.quantity || product.quantity;
         product.regularPrice = req.body.regularPrice || product.regularPrice;
         product.discountPrice = req.body.discountPrice || product.discountPrice;
         product.vendor = req.body.vendor || product.vendor;
-        product.tags = req.body.tags || product.tags;
+        product.tags = req.body.tags.split(',') || product.tags;
         product.trending = req.body.trending || product.trending;
 
         if (req.body.deletedImages && req.body.deletedImages.length > 0) {

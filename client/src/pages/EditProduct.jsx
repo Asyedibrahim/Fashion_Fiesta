@@ -67,7 +67,7 @@ export default function EditProduct() {
                 return;
             }
             setFormData(data);
-            setImagePreview(data.images.map((image) => `http://localhost:3000/${image}`));
+            setImagePreview(data.images.map((image) => image));
 
         } catch (error) {
             console.log(error.message);

@@ -1,33 +1,41 @@
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
 import multer from 'multer';
-import path from 'path';
+import dotenv from 'dotenv';
 
-// Set storage engine
-const storage = multer.diskStorage({
-  destination: './uploads/',
-  filename: (req, file, cb) => {
-    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
-  }
+dotenv.config();
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Check file type
-function checkFileType(file, cb) {
-  const filetypes = /jpeg|jpg|png/;
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = filetypes.test(file.mimetype);
+// Configure Multer storage for Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'uploads', // Cloudinary folder name
+    format: async (req, file) => file.mimetype.split('/')[1], // Get file extension
+    public_id: (req, file) => file.originalname.split('.')[0] + '-' + Date.now(), // Create unique public_id
+  },
+});
 
-  if (mimetype && extname) {
-    return cb(null, true);
-  } else {
-    cb('Error: Images Only!');
-  }
-}
-
-// Init upload
+// Initialize Multer with Cloudinary storage
 const upload = multer({
   storage: storage,
   limits: { fileSize: 1000000 }, // 1MB
   fileFilter: (req, file, cb) => {
-    checkFileType(file, cb);
+    const filetypes = /jpeg|jpg|png/;
+    const extname = filetypes.test(file.mimetype);
+    const mimetype = filetypes.test(file.mimetype);
+    
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb('Error: Images Only!');
+    }
   }
 }).array('images', 10); // 10 images max
 

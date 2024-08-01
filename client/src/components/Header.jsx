@@ -78,7 +78,7 @@ export default function Header() {
           </Link>
           
           {currentUser ? (
-            <Dropdown arrowIcon={true} inline label={ <IoPerson className='text-gray-700 text-xl sm:text-2xl'/> }>
+            <Dropdown arrowIcon={true} inline label={ <IoPerson className='text-gray-700 text-xl sm:text-2xl'/> } >
                 <Dropdown.Header>
                     <span className='block text-sm font-medium truncate'>{currentUser.email}</span>
                 </Dropdown.Header>

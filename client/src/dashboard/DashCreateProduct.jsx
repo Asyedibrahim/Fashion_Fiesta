@@ -62,7 +62,6 @@ export default function DashCreateProduct() {
               <Table.HeadCell>Date</Table.HeadCell>
               <Table.HeadCell>Name</Table.HeadCell>
               <Table.HeadCell>Category</Table.HeadCell>
-              <Table.HeadCell>sizes</Table.HeadCell>
               <Table.HeadCell>Quantity</Table.HeadCell>
               <Table.HeadCell>Trending</Table.HeadCell>
               <Table.HeadCell colSpan='2' align='center'>Actions</Table.HeadCell>
@@ -71,11 +70,10 @@ export default function DashCreateProduct() {
               <Table.Body className='divide-y' key={product._id}>
                 <Table.Row className='bg-white'>
                   <Table.Cell>{new Date(product.createdAt).toLocaleDateString()}</Table.Cell>
-                  <Table.Cell className='font-medium text-gray-900'>
+                  <Table.Cell className='font-medium text-gray-900 line-clamp-1'>
                     <Link to={`/product/${product._id}`}>{product.name}</Link>
                   </Table.Cell>
                   <Table.Cell className='capitalize'>{product.category}</Table.Cell>
-                  <Table.Cell>{product.sizes.join(', ')}</Table.Cell>
                   <Table.Cell>{product.quantity}</Table.Cell>
                   <Table.Cell>{product.trending ? 'Yes' : 'No'}</Table.Cell>
                   <Table.Cell className='text-teal-500 font-medium hover:underline cursor-pointer'>
