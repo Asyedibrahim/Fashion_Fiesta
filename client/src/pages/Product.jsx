@@ -3,11 +3,14 @@ import { useParams } from "react-router-dom";
 import { Card, Carousel } from "flowbite-react";
 import { IoStar, IoShareSocial } from 'react-icons/io5';
 import { FaCartPlus, FaRegHeart } from 'react-icons/fa';
+import OwlCarousel from 'react-owl-carousel';
+import 'owl.carousel/dist/assets/owl.carousel.css';
+import 'owl.carousel/dist/assets/owl.theme.default.css';
 
 export default function Product() {
 
   const { productId } = useParams();
-  const [product, setProducts] = useState(null);
+  const [product, setProduct] = useState(null);
   const [mainImage, setMainImage] = useState(null);
   const [showFullDescription, setShowFullDescription] = useState(false);
 
@@ -18,7 +21,7 @@ export default function Product() {
         const data = await res.json();
 
         if (res.ok) {
-          setProducts(data);
+          setProduct(data);
           if (data.images) {
             setMainImage(data.images[0]);
           }
@@ -28,7 +31,37 @@ export default function Product() {
       }
     }
     fetchProduct();
-  }, [productId])
+  }, [productId]);
+
+  // const destroyOwlCarousel = (selector) => {
+  //   const carousel = $(selector);
+  //   if (carousel.data('owl.carousel')) {
+  //     carousel.trigger('destroy.owl.carousel').removeClass('owl-carousel owl-loaded');
+  //     carousel.find('.owl-stage-outer').children().unwrap();
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (product && product.images) {
+  //     const sliderCarousel = $('.slider-carousel').owlCarousel({
+  //       loop: true,
+  //       autoplay: true,
+  //       autoplayTimeout: 2000,
+  //       autoplayHoverPause: true,
+  //       margin: 5,
+  //       nav: false,
+  //       responsive: {
+  //         0: { items: 1 },
+  //         600: { items: 1 },
+  //         1000: { items: 1 },
+  //       },
+  //     });
+
+  //     return () => {
+  //       destroyOwlCarousel('.slider-carousel');
+  //     };
+  //   }
+  // }, [setProduct]);
 
   const handleShare = () => {
     if (navigator.share) {
@@ -52,13 +85,21 @@ export default function Product() {
       <div className="mt-5 overflow-hidden flex flex-col md:flex-row gap-5">
 
         {/* Small device image */}
-        <div className="w-[20rem] h-[26rem] rounded-md mx-auto md:mx-0 sm:hidden">
-          <Carousel leftControl={<></>} rightControl={<></>}>
-            {product.images && product.images.map((image, index) => (
-              <img src={image} key={index} alt="Similar Product" className="object-cover w-full h-full focus:outline-none"/>
-            ))}
-          </Carousel>
+        <div className="sm:hidden w-[20rem] h-[28rem] rounded-md mx-auto md:mx-0">
+          <OwlCarousel 
+            className="slider-carousel owl-theme "
+            loop
+            margin={5}
+            autoplay
+            autoplayTimeout={10000}
+            items={1}>
+              {product.images && product.images.map((image, index) => (
+                <img src={image} key={index} alt={product.name} className='object-cover w-full h-full rounded-md mx-auto' />
+              ))}
+          </OwlCarousel>
         </div>
+          
+
         {/* Large device image */}
         <div className="hidden sm:flex md:flex-1 lg:flex-none flex-col sm:flex-row md:flex-col gap-2 w-full lg:w-96 sm:h-[30rem] sm:ml-9 md:ml-0 md:h-full ">
           <div className="relative">
@@ -76,7 +117,7 @@ export default function Product() {
 
         <div className="flex-1 max-w-xl">
           <div className="flex justify-between items-center">
-            <h3 className="text-2xl font-semibold text-slate-700">{product.name}</h3>
+            <h3 className="text-xl sm:text-2xl font-semibold text-slate-700 line-clamp-2">{product.name}</h3>
             <div className="flex gap-3 text-2xl">
               <FaRegHeart className="hover:text-rose-600 cursor-pointer"/>
               <IoShareSocial className="cursor-pointer" onClick={handleShare}/>
@@ -112,6 +153,7 @@ export default function Product() {
             </button>
           </div>
         </div>
+
       </div>
 
       <div className="mt-10">
